@@ -16,7 +16,6 @@ type EditedEvent = Omit<ApiEventEntryInput, 'time'>
 
 const priorities = ['Low', 'Medium', 'High', 'Critical']
 const structureTypes: [value: string, title: string][] = [
-  ['TCU', 'TCU'],
   ['IHub', 'IHub'],
   ['POS', 'POS'],
   ['POCO', 'POCO'],
@@ -31,6 +30,8 @@ const structureTypes: [value: string, title: string][] = [
   ['Pharolynx', 'Pharolynx Cyno Beacon'],
   ['Tenebrex', 'Tenebrex Cyno Jammer'],
   ['Ansiblex', 'Ansiblex Jump Gate'],
+  ['Skyhook', 'Orbital Skyhook'],
+  ['Merc Den', 'Mercenary Den'],
   ['other', 'other'],
 ]
 const eventTypes = ['Anchoring', 'Shield', 'Armor', 'Structure', 'other']
