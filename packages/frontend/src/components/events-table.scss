@@ -10,6 +10,12 @@
   }
 }
 
+.events-filter-row {
+  & input {
+    min-width: 6rem;
+  }
+}
+
 .event-row {
   & * {
     white-space: nowrap;
