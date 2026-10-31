@@ -72,7 +72,10 @@ export function EditEventDialog({
 
   const timeInput = useAbsoluteRelativeTimeInput({ time: inputTime, onChange: setInputTime })
 
-  const canSave = Object.entries(editedEvent ?? {}).every(([k, v]) => k === 'notes' || !!v)
+  const optionalFields: Array<keyof EditedEvent> = ['notes', 'corp_ticker', 'alliance_ticker']
+  const canSave = Object.entries(editedEvent ?? {}).every(
+      ([k, v]) => optionalFields.includes(k as keyof EditedEvent) || !!v
+  )
   const save = () => {
     if (canSave && onSave) {
       onSave({
@@ -252,6 +255,26 @@ export function EditEventDialog({
               <hr />
             </Col>
 
+            <Form.Group as={Col} controlId="corpTicker" xs={12} sm={6} className="mb-3">
+              <Form.Label>Corp Ticker</Form.Label>
+              <Form.Control
+                  value={editedEvent.corp_ticker ?? ''}
+                  onChange={e => setEventField('corp_ticker', e.target.value)}
+                  placeholder="Optional"
+                  maxLength={8}
+              />
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="allianceTicker" xs={12} sm={6} className="mb-3">
+              <Form.Label>Alliance Ticker</Form.Label>
+              <Form.Control
+                  value={editedEvent.alliance_ticker ?? ''}
+                  onChange={e => setEventField('alliance_ticker', e.target.value)}
+                  placeholder="Optional"
+                  maxLength={8}
+              />
+            </Form.Group>
+
             <Form.Group as={Col} controlId="notes" xs={12} className="mb-3">
               <Form.Label>Notes</Form.Label>
               <Form.Control
@@ -315,5 +338,7 @@ function getDefaultEditedEvent(): EditedEvent {
     standing: '',
     result: 'No data',
     notes: '',
+    corp_ticker: '',
+    alliance_ticker: '',
   }
 }

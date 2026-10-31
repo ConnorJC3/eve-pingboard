@@ -81,6 +81,8 @@ export class EventsRepository {
         type: timer.type,
         updated_by: characterName,
         updated_at: new Date(),
+        corp_ticker: timer.corp_ticker || null,
+        alliance_ticker: timer.alliance_ticker || null,
       })
 
     if (inserted.length > 0) {
@@ -105,6 +107,8 @@ export class EventsRepository {
         notes: timer.notes,
         updated_by: characterName,
         updated_at: new Date(),
+        corp_ticker: timer.corp_ticker || null,
+        alliance_ticker: timer.alliance_ticker || null,
       })
     if (updateCount < 1) {
       return null
@@ -133,5 +137,7 @@ function rawToEvent(raw: Events & Systems): ApiEventEntry {
     notes: raw.notes ?? '',
     updatedAt: raw.updated_at?.toISOString() ?? '',
     updatedBy: raw.updated_by ?? '',
+    corp_ticker: raw.corp_ticker ?? '',
+    alliance_ticker: raw.alliance_ticker ?? '',
   }
 }

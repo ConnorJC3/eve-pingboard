@@ -39,6 +39,8 @@ export function EventsTable({
           <th>Structure</th>
           <th>Type</th>
           <th>Standing</th>
+          <th>Corp</th>
+          <th>Alliance</th>
           <th>Relative Time</th>
           <th>Local Time</th>
           <th>EVE Time</th>
@@ -63,6 +65,8 @@ export function EventsTable({
             <td>{event.structure}</td>
             <td>{event.type}</td>
             <td>{event.standing}</td>
+            <td>{event.corp_ticker}</td>
+            <td>{event.alliance_ticker}</td>
             <td><RelativeTime time={event.time} /></td>
             <td><Time time={event.time} /></td>
             <td><Time time={dayjs(event.time).utc()} format="YYYY-MM-DD HH:mm" asLink /></td>
