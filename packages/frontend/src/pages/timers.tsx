@@ -1,6 +1,6 @@
 import { ApiEventEntry, ApiEventEntryInput, UserRoles } from '@ping-board/common'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Container } from 'react-bootstrap'
 import { Navigate, useMatch } from 'react-router-dom'
 import {
@@ -10,9 +10,24 @@ import {
   useUpdateEventMutation,
 } from '../store'
 import { useEventsList } from '../hooks/use-events-list'
+import { DateTimeRangeFilter, DateTimeRangeValue } from '../components/date-time-range-filter'
 import { EditEventDialog } from '../components/edit-event-dialog'
 import { EventsTable } from '../components/events-table'
 import './timers.scss'
+
+function isInDateTimeRange(event: ApiEventEntry, range: DateTimeRangeValue): boolean {
+  const eventTime = dayjs(event.time)
+
+  if (range.from && eventTime.isBefore(dayjs(range.from))) {
+    return false
+  }
+
+  if (range.to && eventTime.isAfter(dayjs(range.to))) {
+    return false
+  }
+
+  return true
+}
 
 export function TimersPage(): JSX.Element {
   const me = useGetUserQuery()
@@ -23,12 +38,19 @@ export function TimersPage(): JSX.Element {
   )
   const canRead = me.data?.isLoggedIn && me.data.character.roles.includes(UserRoles.EVENTS_READ)
 
+  const [timeRange, setTimeRange] = useState<DateTimeRangeValue>({
+    from: '',
+    to: '',
+  })
   const eventsList = useEventsList({ skip: me.isLoading || !canRead })
+  const timeFilteredEvents = useMemo(() => (
+    eventsList.events.filter(event => isInDateTimeRange(event, timeRange))
+  ), [eventsList.events, timeRange])
   const upcomingThreshold = Date.now() + 1000 * 60 * 60
   const pastThreshold = Date.now() - 1000 * 60 * 60
-  const upcomingEvents = eventsList.events.filter(e => dayjs(e.time).valueOf() > upcomingThreshold)
-  const pastEvents = eventsList.events.filter(e => dayjs(e.time).valueOf() < pastThreshold)
-  const activeEvents = eventsList.events.filter(e => {
+  const upcomingEvents = timeFilteredEvents.filter(e => dayjs(e.time).valueOf() > upcomingThreshold)
+  const pastEvents = timeFilteredEvents.filter(e => dayjs(e.time).valueOf() < pastThreshold)
+  const activeEvents = timeFilteredEvents.filter(e => {
     const t = dayjs(e.time).valueOf()
     return t <= upcomingThreshold && t >= pastThreshold
   })
@@ -104,6 +126,11 @@ export function TimersPage(): JSX.Element {
         <Button onClick={eventsList.reloadEvents} disabled={isSaving}>
           <i className="bi-arrow-clockwise" /> Reload
         </Button>
+        <DateTimeRangeFilter
+          label="Timer range"
+          value={timeRange}
+          onChange={setTimeRange}
+        />
         <div style={{ flex: 1 }} />
         {canAdd &&
           <Button onClick={addNewEvent} disabled={isSaving}>

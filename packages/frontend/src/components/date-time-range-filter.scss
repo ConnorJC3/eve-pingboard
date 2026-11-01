@@ -1,0 +1,18 @@
+.date-time-range-filter {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+}
+
+.date-time-range-filter-inputs {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.date-time-range-filter-field {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  min-width: 12rem;
+}

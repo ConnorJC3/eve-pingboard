@@ -25,24 +25,13 @@ type EventFilterColumn =
   | 'standing'
   | 'corp_ticker'
   | 'alliance_ticker'
-  | 'relativeTime'
-  | 'localTime'
-  | 'eveTime'
   | 'result'
   | 'notes'
 
 type EventFilters = Partial<Record<EventFilterColumn, string>>
 
 function getFilterValue(event: ApiEventEntry, column: EventFilterColumn): string {
-  switch (column) {
-    case 'relativeTime':
-    case 'localTime':
-      return dayjs(event.time).format('YYYY-MM-DD HH:mm')
-    case 'eveTime':
-      return dayjs(event.time).utc().format('YYYY-MM-DD HH:mm')
-    default:
-      return String(event[column] ?? '')
-  }
+  return String(event[column] ?? '')
 }
 
 export function EventsTable({
@@ -105,9 +94,9 @@ export function EventsTable({
         <th>{renderFilter('standing', 'Standing')}</th>
         <th>{renderFilter('corp_ticker', 'Corp')}</th>
         <th>{renderFilter('alliance_ticker', 'Alliance')}</th>
-        <th>{renderFilter('relativeTime', 'Relative Time')}</th>
-        <th>{renderFilter('localTime', 'Local Time')}</th>
-        <th>{renderFilter('eveTime', 'EVE Time')}</th>
+        <th>Relative Time</th>
+        <th>Local Time</th>
+        <th>EVE Time</th>
         {showResultColumn && <th>{renderFilter('result', 'Result')}</th>}
         <th>{renderFilter('notes', 'Notes')}</th>
         {canEdit && <th>Action</th>}
