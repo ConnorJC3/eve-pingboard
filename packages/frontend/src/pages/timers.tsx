@@ -139,17 +139,6 @@ export function TimersPage(): JSX.Element {
         }
       </div>
 
-      {upcomingEvents.length > 0 && (<>
-        <h4>Upcoming</h4>
-
-        <EventsTable
-          events={upcomingEvents}
-          showResultColumn
-          canEdit={canEdit}
-          onEdit={editEvent}
-        />
-      </>)}
-
       {activeEvents.length > 0 && (<>
         <h4>Active</h4>
 
@@ -158,6 +147,19 @@ export function TimersPage(): JSX.Element {
           showResultColumn
           canEdit={canEdit}
           onEdit={editEvent}
+          reversed = {true}
+        />
+      </>)}
+
+      {upcomingEvents.length > 0 && (<>
+        <h4>Upcoming</h4>
+
+        <EventsTable
+          events={upcomingEvents}
+          showResultColumn
+          canEdit={canEdit}
+          onEdit={editEvent}
+          reversed = {true}
         />
       </>)}
 
@@ -169,6 +171,7 @@ export function TimersPage(): JSX.Element {
           showResultColumn
           canEdit={canEdit}
           onEdit={editEvent}
+          reversed = {false}
         />
       </>)}
 

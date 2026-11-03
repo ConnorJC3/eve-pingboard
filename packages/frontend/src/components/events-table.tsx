@@ -14,6 +14,7 @@ export interface EventsTableProps {
   canEdit?: boolean
   onEdit?: (event: ApiEventEntry) => void
   events: ApiEventEntry[]
+  reversed?: boolean
 }
 
 type EventFilterColumn =
@@ -39,6 +40,7 @@ export function EventsTable({
                               canEdit = false,
                               onEdit,
                               events,
+                              reversed = false,
                             }: EventsTableProps): JSX.Element {
   const [filters, setFilters] = useState<EventFilters>({})
 
@@ -57,13 +59,14 @@ export function EventsTable({
       .filter(([, value]) => value.length > 0)
 
     if (activeFilters.length === 0) {
-      return events
+      return  reversed ? events.reverse() : events
     }
 
-    return events.filter(event => activeFilters.every(([column, value]) =>
+    const filteredEvents = events.filter(event => activeFilters.every(([column, value]) =>
       getFilterValue(event, column).toLowerCase().includes(value)
     ))
-  }, [events, filters])
+    return reversed ? filteredEvents.reverse() : filteredEvents
+  }, [events, filters, reversed])
 
   const updateFilter = (column: EventFilterColumn, value: string) => {
     setFilters(current => ({
