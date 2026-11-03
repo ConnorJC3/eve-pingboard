@@ -16,10 +16,12 @@ export async function seed(knex: Knex): Promise<void> {
 
   console.log('Downloading constellations...')
   const constellationsCsv = await fetch(constellationsUrl)
-  const constellations = new Map((await constellationsCsv.text()).split('\n').slice(1, -1).map(line => {
-    const [_, constellationId, constellationName] = line.split(',', 3)
-    return [parseInt(stripQuotations(constellationId)), stripQuotations(constellationName)]
-  }))
+  const constellations = new Map((await constellationsCsv.text()).split('\n').slice(1, -1).map(
+    line => {
+      const [_, constellationId, constellationName] = line.split(',', 3)
+      return [parseInt(stripQuotations(constellationId)), stripQuotations(constellationName)]
+    }
+  ))
 
   console.log('Downloading solar systems...')
   const solarSystemsCsv = await fetch(solarSystemsUrl)

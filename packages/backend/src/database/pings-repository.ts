@@ -143,7 +143,7 @@ export class PingsRepository {
         slack_channel_name: options.template.slackChannelName,
         text: options.text,
         discord_channel_id: options.template.discordChannelId ?? null,
-        discord_channel_name: options.discordChannelName ?? null
+        discord_channel_name: options.discordChannelName ?? null,
       }))[0]
       if (options.template.allowScheduling && options.scheduledFor && options.scheduledTitle) {
         const date = new Date(options.scheduledFor)

@@ -50,8 +50,12 @@ export class EveSSOClient {
       clientId: options.clientId,
       clientSecret: options.clientSecret,
       redirectUri: options.redirectUri,
-      accessTokenUri: options.accessTokenUri ?? 'https://login.eveonline.com/v2/oauth/token',
-      authorizationUri: options.authorizationUri ?? 'https://login.eveonline.com/v2/oauth/authorize',
+      accessTokenUri: (
+        options.accessTokenUri ?? 'https://login.eveonline.com/v2/oauth/token'
+      ),
+      authorizationUri: (
+        options.authorizationUri ?? 'https://login.eveonline.com/v2/oauth/authorize'
+      ),
     })
 
     this.stateTimeout = options.stateTimeout ?? 300

@@ -256,7 +256,9 @@ export function EditEventDialog({
                 onPaste={(e) => {
                   if (extractDateTimeFromGameText(e)) {
                     timeInput.handleChangeInputMode('absolute')
-                    timeInput.handleAbsoluteDateChange(extractDateTimeFromGameText(e) as dayjs.Dayjs)
+                    timeInput.handleAbsoluteDateChange(
+                      extractDateTimeFromGameText(e) as dayjs.Dayjs
+                    )
                   }
                 }}
               />
