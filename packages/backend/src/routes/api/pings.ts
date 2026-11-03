@@ -210,8 +210,8 @@ export function getRouter(options: {
   })
 
   router.get(
-    '/discord-channels', 
-    userRoles.requireOneOf(UserRoles.PING_TEMPLATES_WRITE), 
+    '/discord-channels',
+    userRoles.requireOneOf(UserRoles.PING_TEMPLATES_WRITE),
     async ctx => {
       const channels = await options.discordClient.getChannels()
       ctx.body = { channels }
