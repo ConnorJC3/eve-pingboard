@@ -89,6 +89,8 @@ const eventSchema = yup.object().noUnknown(true).shape({
   time: yup.date().required(),
   result: yup.string().required(),
   notes: yup.string().min(0),
+  corp_ticker: yup.string().max(8).optional(),
+  alliance_ticker: yup.string().max(8).optional(),
 })
 
 async function validateEventInput(

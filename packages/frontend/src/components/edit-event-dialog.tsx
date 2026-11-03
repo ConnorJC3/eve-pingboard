@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, ClipboardEvent, useEffect, useState } from 'react'
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { ApiEventEntry, ApiEventEntryInput } from '@ping-board/common'
 import { DateTimeInput } from './date-time-input'
@@ -16,7 +16,6 @@ type EditedEvent = Omit<ApiEventEntryInput, 'time'>
 
 const priorities = ['Low', 'Medium', 'High', 'Critical']
 const structureTypes: [value: string, title: string][] = [
-  ['TCU', 'TCU'],
   ['IHub', 'IHub'],
   ['POS', 'POS'],
   ['POCO', 'POCO'],
@@ -31,6 +30,8 @@ const structureTypes: [value: string, title: string][] = [
   ['Pharolynx', 'Pharolynx Cyno Beacon'],
   ['Tenebrex', 'Tenebrex Cyno Jammer'],
   ['Ansiblex', 'Ansiblex Jump Gate'],
+  ['Skyhook', 'Orbital Skyhook'],
+  ['Merc Den', 'Mercenary Den'],
   ['other', 'other'],
 ]
 const eventTypes = ['Anchoring', 'Shield', 'Armor', 'Structure', 'other']
@@ -71,7 +72,10 @@ export function EditEventDialog({
 
   const timeInput = useAbsoluteRelativeTimeInput({ time: inputTime, onChange: setInputTime })
 
-  const canSave = Object.entries(editedEvent ?? {}).every(([k, v]) => k === 'notes' || !!v)
+  const optionalFields: Array<keyof EditedEvent> = ['notes', 'corp_ticker', 'alliance_ticker']
+  const canSave = Object.entries(editedEvent ?? {}).every(
+      ([k, v]) => optionalFields.includes(k as keyof EditedEvent) || !!v
+  )
   const save = () => {
     if (canSave && onSave) {
       onSave({
@@ -243,6 +247,20 @@ export function EditEventDialog({
               />
             </Form.Group>
 
+            <Form.Group as={Col} controlId="dateParser" xs={12} className="mb-3">
+              <Form.Label>Date Parser</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={1}
+                placeholder="If you copied a timer in-game, paste it here"
+                onPaste={(e) => {
+                  if (extractDateTimeFromGameText(e)) {
+                    timeInput.handleChangeInputMode('absolute')
+                    timeInput.handleAbsoluteDateChange(extractDateTimeFromGameText(e) as dayjs.Dayjs)
+                  }
+                }}
+              />
+            </Form.Group>
             {/*
               Show a horizontal divider on smaller screens (≤ md) to make it more obvious that
               the inputs below are not affected by the absolute/relative time radio buttons
@@ -250,6 +268,26 @@ export function EditEventDialog({
             <Col xs={12} className="d-block d-lg-none">
               <hr />
             </Col>
+
+            <Form.Group as={Col} controlId="corpTicker" xs={12} sm={6} className="mb-3">
+              <Form.Label>Corp Ticker</Form.Label>
+              <Form.Control
+                  value={editedEvent.corp_ticker ?? ''}
+                  onChange={e => setEventField('corp_ticker', e.target.value)}
+                  placeholder="Optional"
+                  maxLength={8}
+              />
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="allianceTicker" xs={12} sm={6} className="mb-3">
+              <Form.Label>Alliance Ticker</Form.Label>
+              <Form.Control
+                  value={editedEvent.alliance_ticker ?? ''}
+                  onChange={e => setEventField('alliance_ticker', e.target.value)}
+                  placeholder="Optional"
+                  maxLength={8}
+              />
+            </Form.Group>
 
             <Form.Group as={Col} controlId="notes" xs={12} className="mb-3">
               <Form.Label>Notes</Form.Label>
@@ -314,5 +352,17 @@ function getDefaultEditedEvent(): EditedEvent {
     standing: '',
     result: 'No data',
     notes: '',
+    corp_ticker: '',
+    alliance_ticker: '',
   }
+}
+
+function extractDateTimeFromGameText(e: ClipboardEvent): dayjs.Dayjs | null {
+  const pasteData = e.clipboardData.getData('text/plain')
+  const splitData = pasteData.split('\n')
+  if (!splitData[splitData.length - 1].includes('until')) return null
+  const timeLine = splitData[splitData.length - 1]
+    .split('until')[1]
+    .substring(1)
+  return dayjs(timeLine, 'YYYY-MM-DD HH:mm:ss', true).utc(true)
 }

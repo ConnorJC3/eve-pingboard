@@ -12,6 +12,8 @@ export interface Events {
   notes: string | null
   updated_by: string | null
   updated_at: Date | null
+  corp_ticker: string | null
+  alliance_ticker: string | null
 }
 
 declare module 'knex/types/tables' {
