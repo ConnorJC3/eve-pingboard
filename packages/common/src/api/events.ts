@@ -7,8 +7,8 @@ export interface ApiEventEntryInput {
   time: string
   result: string
   notes: string
-  corp_ticker?: string
-  alliance_ticker?: string
+  corp_ticker: string
+  alliance_ticker: string
 }
 
 export interface ApiEventEntry extends ApiEventEntryInput {

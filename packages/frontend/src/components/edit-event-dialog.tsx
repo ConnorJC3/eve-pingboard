@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, ClipboardEvent, useEffect, useState } from 'react'
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { ApiEventEntry, ApiEventEntryInput } from '@ping-board/common'
 import { DateTimeInput } from './date-time-input'
@@ -247,6 +247,20 @@ export function EditEventDialog({
               />
             </Form.Group>
 
+            <Form.Group as={Col} controlId="dateParser" xs={12} className="mb-3">
+              <Form.Label>Date Parser</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={1}
+                placeholder="If you copied a timer in-game, paste it here"
+                onPaste={(e) => {
+                  if (extractDateTimeFromGameText(e)) {
+                    timeInput.handleChangeInputMode('absolute')
+                    timeInput.handleAbsoluteDateChange(extractDateTimeFromGameText(e) as dayjs.Dayjs)
+                  }
+                }}
+              />
+            </Form.Group>
             {/*
               Show a horizontal divider on smaller screens (≤ md) to make it more obvious that
               the inputs below are not affected by the absolute/relative time radio buttons
@@ -341,4 +355,14 @@ function getDefaultEditedEvent(): EditedEvent {
     corp_ticker: '',
     alliance_ticker: '',
   }
+}
+
+function extractDateTimeFromGameText(e: ClipboardEvent): dayjs.Dayjs | null {
+  const pasteData = e.clipboardData.getData('text/plain')
+  const splitData = pasteData.split('\n')
+  if (!splitData[splitData.length - 1].includes('until')) return null
+  const timeLine = splitData[splitData.length - 1]
+    .split('until')[1]
+    .substring(1)
+  return dayjs(timeLine, 'YYYY-MM-DD HH:mm:ss', true).utc(true)
 }
