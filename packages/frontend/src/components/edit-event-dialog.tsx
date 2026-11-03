@@ -205,6 +205,28 @@ export function EditEventDialog({
               </Form.Select>
             </Form.Group>
 
+            <Form.Group as={Col} controlId="dateParser" xs={12} className="mb-3">
+              <Form.Label>Date Parser</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={1}
+                placeholder="If you copied a timer in-game, paste it here"
+                onPaste={(e) => {
+                  if (extractDateTimeFromGameText(e)) {
+                    timeInput.handleChangeInputMode('absolute')
+                    timeInput.handleAbsoluteDateChange(
+                      extractDateTimeFromGameText(e) as dayjs.Dayjs
+                    )
+                    if (editedEvent.notes === undefined || editedEvent.notes === '') {
+                      editedEvent.notes = e.clipboardData
+                        .getData('text/plain')
+                        .split('\n')[0]
+                    }
+                  }
+                }}
+              />
+            </Form.Group>
+
             <Col xs={12}>
               <Form.Label>Event Time</Form.Label>
             </Col>
@@ -247,22 +269,6 @@ export function EditEventDialog({
               />
             </Form.Group>
 
-            <Form.Group as={Col} controlId="dateParser" xs={12} className="mb-3">
-              <Form.Label>Date Parser</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={1}
-                placeholder="If you copied a timer in-game, paste it here"
-                onPaste={(e) => {
-                  if (extractDateTimeFromGameText(e)) {
-                    timeInput.handleChangeInputMode('absolute')
-                    timeInput.handleAbsoluteDateChange(
-                      extractDateTimeFromGameText(e) as dayjs.Dayjs
-                    )
-                  }
-                }}
-              />
-            </Form.Group>
             {/*
               Show a horizontal divider on smaller screens (≤ md) to make it more obvious that
               the inputs below are not affected by the absolute/relative time radio buttons
@@ -298,6 +304,7 @@ export function EditEventDialog({
                 rows={1}
                 value={editedEvent?.notes ?? ''}
                 onChange={e => setEventField('notes', e.target.value)}
+                placeholder="If you pasted a timer above, the structure's name will appear here"
               />
             </Form.Group>
           </Row>
